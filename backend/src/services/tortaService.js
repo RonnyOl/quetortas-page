@@ -1,3 +1,4 @@
+import { Producto } from "../models/productModel.js";
 import { Torta } from "../models/tortaModel.js";
 
 
@@ -17,13 +18,14 @@ export class TortaService {
   }
 
   // --- obtiene las tortas que cumplan con los filtros --
-  static async getAllbyFilters({ filters }) {
-    return await Torta.find(filters);
+  static async getAllbyFilters(filtros) {
+
+    return  await Torta.find(filtros);
   }
+
   // -- obtiene una torta por su id -- 
   static async getById({ id }) {
     const tortas = await Torta.findById(id);
-
     return tortas;
   }
 
@@ -45,7 +47,9 @@ export class TortaService {
 
   // -- crea una nueva torta   --
   static async create({ input }) {
+
     const torta = await Torta.create(input)
+    
     return true;
   }
 }

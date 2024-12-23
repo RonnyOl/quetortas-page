@@ -43,6 +43,32 @@ export default function Home() {
         click for login
       </button>
 
+      <button onClick={async () =>{
+        const response = await fetch('http://localhost:8080/pedido/create', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include', // Importante: Esto envía las cookies al servidor
+          body: JSON.stringify({
+              products: [
+                  { producto: "6431bc25c9f7ae9c3e41b726", cantidad: 2 },
+                  { producto: "6431bc25c9f7ae9c3e41b727", cantidad: 1 }
+              ],
+              total: 150.50,
+              estado: "Pendiente",
+              pagado: false,
+          }),
+      });
+  
+      if (response.ok) {
+          const data = await response.json();
+          console.log('Pedido creado:', data);
+      } else {
+          console.error('Error al crear el pedido:', await response.json());
+      }
+      }} >
+        click for loginasda
+      </button>
+
       
 
     </div>

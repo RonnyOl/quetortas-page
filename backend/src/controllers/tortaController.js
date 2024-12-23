@@ -16,10 +16,16 @@ export class TortaController {
 
     static async getAllbyFilters(req, res) {
         try {
-            const filters = req.query; // Esto contiene todos los query params de la URL
-            const tortas = await TortaService.getAllbyFilters({filters}); // `find` usará los filtros dinámicamente
             
+            const {price, flavor} = req.query; // Esto contiene todos los query params de la URL
+            const filtros = {};
             
+            if (price) filtros.price = { $lt: parseFloat(price) };
+           
+            if (flavor) filtros.flavor = flavor;    
+            
+            const tortas = await TortaService.getAllbyFilters(filtros); // `find` usará los filtros dinámicamente
+
             if (tortas.length === 0) {
                 return res.status(404).json({ message: 'tortas not found' });
             }

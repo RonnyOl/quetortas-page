@@ -1,9 +1,9 @@
-import mongoose, { model, Schema } from "mongoose";
+import mongoose from "mongoose";
+import { Producto } from "./productModel.js";
 
-const tortaSchema = new Schema({
-    title: {type: String, required: true},
-    price: {type: Number, required: true},
-    flavor: {type: String}
-})
+const tortaSchema = new mongoose.Schema({
+    flavor: { type: String, required: true },
+});
 
-export const Torta = mongoose.models.Torta || model("Torta", tortaSchema)
+// Usamos el discriminador para crear el modelo "Torta" que extiende a "Producto"
+export const Torta = mongoose.models.Torta || Producto.discriminator("Torta", tortaSchema);

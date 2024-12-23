@@ -45,4 +45,9 @@ export class UserController {
         }
     }
 
+    static async logout(req, res) {
+        res.clearCookie('access_token')
+        res.json({ message: 'logout' })
+    }
+
 }
