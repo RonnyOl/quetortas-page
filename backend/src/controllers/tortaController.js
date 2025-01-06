@@ -1,3 +1,4 @@
+import { Torta } from "../models/tortaModel.js";
 import { validatePartialTorta, validateTorta } from "../schema/tortaSchema.js";
 import { TortaService } from "../services/tortaService.js";
 
@@ -17,22 +18,28 @@ export class TortaController {
     static async getAllbyFilters(req, res) {
         try {
             
-            const {price, flavor} = req.query; // Esto contiene todos los query params de la URL
+            const {min, max, flavor, featured, limit = 10, page = 1} = req.query; // Esto contiene todos los query params de la URL
             const filtros = {};
             
-            if (price) filtros.price = { $lt: parseFloat(price) };
-           
-            if (flavor) filtros.flavor = flavor;    
-            
-            const tortas = await TortaService.getAllbyFilters(filtros); // `find` usará los filtros dinámicamente
-
-            if (tortas.length === 0) {
-                return res.status(404).json({ message: 'tortas not found' });
+            if (min || max) {
+                filtros.price = {};
+                if (min) filtros.price.$gte = parseFloat(min); // Precio >= min
+                if (max) filtros.price.$lte = parseFloat(max); // Precio <= max
             }
-    
-            return res.json(tortas);
+           
+            if (flavor) filtros.flavor = flavor;
+            
+            if (featured) filtros.featured = featured;
+            
+            const limitValue = limit ? parseInt(limit) : 10;
+            const pageValue = page ? parseInt(page) : 1;
+            
+            const tortas = await TortaService.getAllbyFilters(filtros, limitValue, pageValue); // `find` usará los filtros dinámicamente
+            const totalProducts = await Torta.countDocuments(filtros);
+            
+            return res.json({tortas, totalPages: Math.ceil(totalProducts / limitValue), currentPage: pageValue});
         } catch (error) {
-            res.status(500).json({ message: 'Error retrieving tortas' });
+            res.status(500).json({ message: 'Error retrieving tortas', errorMessage: error.message });
         }
     }
 
@@ -65,13 +72,29 @@ export class TortaController {
 
     static async create(req, res) {
         try {
-            const result = validateTorta(req.body)
+            console.log(req.body)
+            const result = validateTorta({
+                ...req.body,
+                price: parseFloat(req.body.price),
+            });
 
             if (!result.success) {
                 return res.status(400).json({ error: JSON.parse(result.error.message) })
             }
-            const newCar = await TortaService.create({ input: result.data })
-            res.status(201).json(newCar)
+            
+            // Obtener la ruta de la imagen subida
+            const imagePath = req.file?.filename || null;
+            console.log(req.file)
+            // Crear el nuevo producto incluyendo la ruta de la imagen
+            const newTorta = await TortaService.create({
+                input: {
+                    ...result.data,
+                    
+                    imageURL: imagePath, // Guardar la ruta de la imagen en la base de datos
+                },
+            });
+
+            res.status(201).json(newTorta);
 
         } catch (error) {
             res.status(500).json({ error: "Error creating torta" });

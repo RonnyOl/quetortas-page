@@ -5,6 +5,7 @@ const productoSchema = new Schema({
     price: { type: Number, required: true },
     description: { type: String, required: true },
     featured: { type: Boolean, default: false },
+    imageURL: { type: String, required: false },
     // Quitamos el campo tipo porque lo maneja mongoose con discriminadores
     // tipo: { type: String, required: true }, 
 });

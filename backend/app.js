@@ -7,6 +7,9 @@ import { connectToDB } from "./src/config/db.js";
 import { userRouter } from "./src/routes/userRoutes.js";
 import cookieParser from "cookie-parser";
 import {corsMiddleware} from "./src/middlewares/cors.js";
+import path from 'path';
+import { fileURLToPath } from 'url';
+
 dotenv.config()
 
 
@@ -15,6 +18,8 @@ app.use(corsMiddleware());
 app.use(cookieParser())
 connectToDB()
 app.use(json())
+
+app.use(express.static('./src/public'));
 
 app.use("/tortas", tortasRouter)
 app.use("/user", userRouter)

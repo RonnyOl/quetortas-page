@@ -18,9 +18,9 @@ export class TortaService {
   }
 
   // --- obtiene las tortas que cumplan con los filtros --
-  static async getAllbyFilters(filtros) {
+  static async getAllbyFilters(filtros, limit, page) {
 
-    return  await Torta.find(filtros);
+    return  await Torta.find(filtros).skip((page-1) * limit).limit(limit);
   }
 
   // -- obtiene una torta por su id -- 

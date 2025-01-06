@@ -1,7 +1,9 @@
 import React, { Children } from 'react'
-
+import Navbar from "@/components/navBar"
 export default function layout({children}) {
   return (
-    <main>{children}</main>
+    <>
+    <Navbar/>
+    <main>{children}</main></>
   )
 }
